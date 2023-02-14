@@ -1,18 +1,18 @@
 import os
 from django.db import models
 from django.contrib.auth.models import User
-# from markdownx.models import MarkdownxField
-# from markdownx.utils import markdown
+from markdownx.models import MarkdownxField
+from markdownx.utils import markdown
 
-# class Tag(models.Model):
-#     name = models.CharField(max_length=50)
-#     slug = models.SlugField(max_length=200, unique=True, allow_unicode=True)
+class Tag(models.Model):
+    name = models.CharField(max_length=50)
+    slug = models.SlugField(max_length=200, unique=True, allow_unicode=True)
 
-#     def __str__(self):
-#         return self.name
+    def __str__(self):
+        return self.name
 
-#     def get_absolute_url(self):
-#         return f'/blog/tag/{self.slug}/'
+    def get_absolute_url(self):
+        return f'/blog/tag/{self.slug}/'
         
 class Category(models.Model):
     name = models.CharField(max_length=50, unique=True)
@@ -24,7 +24,7 @@ class Category(models.Model):
     def get_absolute_url(self):
         return f'/blog/category/{self.slug}/'
 
-class Meta:
+    class Meta:
         verbose_name_plural = 'categories'
 
 class Post(models.Model):
@@ -42,12 +42,12 @@ class Post(models.Model):
 
     category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.SET_NULL)
     
-    # tags = models.ManyToManyField(Tag, blank=True)
+    tags = models.ManyToManyField(Tag, blank=True)
 
     def __str__(self):        
-        return f'[{self.pk}]{self.title}' # 포스트의 제목이 나오도록 함. pk는 각 레코드에 대한 고유값으로 처음에는 1이 자동으로 생성되고 1씩 부여된다.
+        return f'[{self.pk}]{self.title}' # 포스트의 제목이 나오도록 함. pk는 각 레코드에 대한 고유값으로 처음에는 1이 자동으로 부여도고 1씩 증가함.   
 
-    def get_absolute_url(self):     # 객체의 상세 페이지로 이동할 수 있는 링크를 만들 수 있음. url생성 큐칙을 저의하는 메서드
+    def get_absolute_url(self): # 객체의 상세 페이지로 이동할 수 있는 링크를 만들 수 있음. url 생성 규칙을 정의하는 메서드
         return f'/blog/{self.pk}/'
 
     def get_file_name(self):
@@ -56,9 +56,9 @@ class Post(models.Model):
     def get_file_ext(self):
         return self.get_file_name().split('.')[-1]
 
-    # def get_content_markdown(self):
-    #     return markdown(self.content)
-'''
+    def get_content_markdown(self):
+        return markdown(self.content)
+
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -72,4 +72,3 @@ class Comment(models.Model):
     def get_absolute_url(self):
         return f'{self.post.get_absolute_url()}#comment-{self.pk}'
            
-'''   
